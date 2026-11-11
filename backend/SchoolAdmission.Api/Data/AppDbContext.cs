@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
     {
     }
 
+    public DbSet<Student> Students => Set<Student>();
     public DbSet<AcademicClass> AcademicClasses => Set<AcademicClass>();
     public DbSet<AcademicShift> AcademicShifts => Set<AcademicShift>();
     public DbSet<SchoolClass> Classes => Set<SchoolClass>();
@@ -18,6 +19,27 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Student Table
+        modelBuilder.Entity<Student>(entity =>
+        {
+            entity.ToTable("students");
+            entity.HasKey(s => s.Id);
+            entity.Property(s => s.Id).HasMaxLength(64);
+            entity.Property(s => s.BirthCertificateNo).IsRequired().HasMaxLength(17);
+            entity.Property(s => s.FullName).IsRequired().HasMaxLength(200);
+            entity.Property(s => s.DateOfBirth).IsRequired();
+            entity.Property(s => s.Gender).IsRequired().HasMaxLength(16);
+            entity.Property(s => s.FatherName).IsRequired().HasMaxLength(200);
+            entity.Property(s => s.MotherName).IsRequired().HasMaxLength(200);
+            entity.Property(s => s.GuardianPhone).HasMaxLength(20);
+            entity.Property(s => s.PresentAddress).HasMaxLength(500);
+            entity.Property(s => s.CreatedAt).HasConversion(
+                v => v.ToUniversalTime(),
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+            );
+            entity.HasIndex(s => s.BirthCertificateNo).IsUnique();
+        });
 
         // Academic Class Table
         modelBuilder.Entity<AcademicClass>(entity =>
@@ -77,8 +99,9 @@ public class AppDbContext : DbContext
             entity.Property(h => h.Id).HasMaxLength(64);
             entity.Property(h => h.ClassId).IsRequired().HasMaxLength(64);
             entity.Property(h => h.StudentId).IsRequired().HasMaxLength(32);
+            entity.Property(h => h.StudentProfileId).HasMaxLength(64);
             entity.Property(h => h.Status).IsRequired().HasMaxLength(32);
-            
+
             entity.Property(h => h.ExpiresAt).HasConversion(
                 v => v.ToUniversalTime(),
                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
@@ -92,6 +115,11 @@ public class AppDbContext : DbContext
                   .WithMany(c => c.Holds)
                   .HasForeignKey(h => h.ClassId)
                   .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(h => h.StudentProfile)
+                  .WithMany(s => s.Holds)
+                  .HasForeignKey(h => h.StudentProfileId)
+                  .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasIndex(h => h.ClassId);
             entity.HasIndex(h => h.StudentId);

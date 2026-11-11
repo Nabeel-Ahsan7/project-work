@@ -1,5 +1,28 @@
 namespace SchoolAdmission.Api.Models;
 
+public static class Gender
+{
+    public const string Male   = "MALE";
+    public const string Female = "FEMALE";
+    public const string Other  = "OTHER";
+}
+
+public class Student
+{
+    public string Id { get; set; } = string.Empty;             // internal UUID-style id
+    public string BirthCertificateNo { get; set; } = string.Empty; // 17-digit, unique
+    public string FullName { get; set; } = string.Empty;
+    public DateOnly DateOfBirth { get; set; }
+    public string Gender { get; set; } = string.Empty;
+    public string FatherName { get; set; } = string.Empty;
+    public string MotherName { get; set; } = string.Empty;
+    public string? GuardianPhone { get; set; }
+    public string? PresentAddress { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public List<SeatHold> Holds { get; set; } = new();
+}
+
 public static class HoldStatus
 {
     public const string Held = "HELD";
@@ -47,7 +70,14 @@ public class SeatHold
 {
     public string Id { get; set; } = string.Empty;
     public string ClassId { get; set; } = string.Empty;
+
+    // Birth certificate number — the natural student identifier used in headers/APIs
     public string StudentId { get; set; } = string.Empty;
+
+    // FK to the Student profile (nullable: legacy holds before profile system)
+    public string? StudentProfileId { get; set; }
+    public Student? StudentProfile { get; set; }
+
     public string Status { get; set; } = HoldStatus.Held;
     public DateTime ExpiresAt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
