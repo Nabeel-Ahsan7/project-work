@@ -25,9 +25,26 @@ docker compose up --build
 
 ### 2. Access the Application
 
-- **Frontend UI:** [http://localhost:3000](http://localhost:3000)
-- **Backend API:** [http://localhost:8080](http://localhost:8080)
-- **Swagger Documentation:** [http://localhost:8080/swagger](http://localhost:8080/swagger)
+- **Frontend Portal (Landing Page):** [http://localhost:3000](http://localhost:3000)
+- **Backend API & Swagger:** [http://localhost:8080/swagger](http://localhost:8080/swagger)
+
+---
+
+## 🧭 Application Flows
+
+### 1. First Page (Landing Page)
+- **"ভর্তির জন্য আবেদন করুন (Apply for Admission)"**: Opens the Student Portal with 17-digit birth registration input, live seat cards, real-time hold countdown modal, and application history.
+- **"প্রশাসক লগইন (Admin Login)"**: Opens the Admin authentication portal.
+
+### 2. Admin Portal & Seeded Credentials
+- **Username:** `admin`
+- **Password:** `admin123`
+- A **"1-Click Login"** button is pre-built on the UI for quick evaluation.
+- Features:
+  - **Class Table:** View and add academic classes (e.g. Class 6, 7, 8, etc.).
+  - **Shift Table:** View and add shifts (e.g. Morning Shift, Day Shift).
+  - **Create Session:** Select Class + Shift + Total Seats to publish admission sessions.
+  - **Live Sessions Table:** Real-time seat tracking (Total, Held, Confirmed, Available).
 
 ---
 
@@ -80,6 +97,5 @@ npm test
 │   └── nginx.conf                # SPA routing configuration
 ├── docker-compose.yml            # Container orchestration
 ├── README.md                     # Setup and running instructions
-├── ASSUMPTIONS.md                # System assumptions & concurrency rationale
-└── AI_USAGE.md                   # AI tool usage disclosure
+└── ASSUMPTIONS.md                # System assumptions & concurrency rationale
 ```
