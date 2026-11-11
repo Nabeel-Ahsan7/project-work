@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace SchoolAdmission.Api.DTOs;
 
@@ -53,4 +52,39 @@ public record MeHoldResponse(
 
 public record ErrorResponse(
     string Message
+);
+
+// Admin & Relational Management DTOs
+public record AdminLoginRequest(
+    [Required] string Username,
+    [Required] string Password
+);
+
+public record AdminLoginResponse(
+    string Token,
+    string Username
+);
+
+public record AcademicClassDto(
+    string Id,
+    string Name
+);
+
+public record CreateAcademicClassRequest(
+    [Required] string Name
+);
+
+public record AcademicShiftDto(
+    string Id,
+    string Name
+);
+
+public record CreateAcademicShiftRequest(
+    [Required] string Name
+);
+
+public record CreateSessionRequest(
+    [Required] string ClassLevelId,
+    [Required] string ShiftId,
+    [Range(1, 100000)] int TotalSeats
 );
