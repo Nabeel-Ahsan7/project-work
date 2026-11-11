@@ -10,6 +10,21 @@ interface Props {
   onError: (msg: string) => void;
 }
 
+interface FieldProps {
+  label: string;
+  id: string;
+  children: React.ReactNode;
+  error?: string;
+}
+
+const Field: React.FC<FieldProps> = ({ label, id, children, error }) => (
+  <div>
+    <label htmlFor={id} className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
+    {children}
+    {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+  </div>
+);
+
 export const StudentRegister: React.FC<Props> = ({ birthCertNo, onRegistered, onBack, onError }) => {
   const [form, setForm] = useState<RegisterStudentPayload>({
     birthCertificateNo: birthCertNo,
@@ -71,16 +86,6 @@ export const StudentRegister: React.FC<Props> = ({ birthCertNo, onRegistered, on
       setLoading(false);
     }
   };
-
-  const Field = ({
-    label, id, children, error
-  }: { label: string; id: string; children: React.ReactNode; error?: string }) => (
-    <div>
-      <label htmlFor={id} className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
-      {children}
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 flex flex-col">
