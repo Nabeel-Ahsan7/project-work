@@ -31,3 +31,25 @@ export interface MeHold {
 export interface ApiError {
   message: string;
 }
+
+// Admin & Relational Management Types
+export interface AdminLoginResponse {
+  token: string;
+  username: string;
+}
+
+export interface AcademicClass {
+  id: string;
+  name: string;
+}
+
+export interface AcademicShift {
+  id: string;
+  name: string;
+}
+
+export interface CreateSessionPayload {
+  classLevelId: string;
+  shiftId: string;
+  totalSeats: number;
+}

@@ -1,4 +1,13 @@
-import { SchoolClass, CreateClassPayload, HoldResponse, MeHold } from './types';
+import {
+  SchoolClass,
+  CreateClassPayload,
+  HoldResponse,
+  MeHold,
+  AdminLoginResponse,
+  AcademicClass,
+  AcademicShift,
+  CreateSessionPayload
+} from './types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -64,5 +73,25 @@ export const api = {
   }, studentId),
   getMyHolds: (studentId: string) => request<MeHold[]>('/me/holds', {
     method: 'GET'
-  }, studentId)
+  }, studentId),
+
+  // Admin APIs
+  adminLogin: (username: string, password: string) => request<AdminLoginResponse>('/admin/login', {
+    method: 'POST',
+    body: JSON.stringify({ username, password })
+  }),
+  getAcademicClasses: () => request<AcademicClass[]>('/admin/classes-catalog'),
+  createAcademicClass: (name: string) => request<AcademicClass>('/admin/classes-catalog', {
+    method: 'POST',
+    body: JSON.stringify({ name })
+  }),
+  getAcademicShifts: () => request<AcademicShift[]>('/admin/shifts'),
+  createAcademicShift: (name: string) => request<AcademicShift>('/admin/shifts', {
+    method: 'POST',
+    body: JSON.stringify({ name })
+  }),
+  createSession: (payload: CreateSessionPayload) => request<{ id: string; name: string; totalSeats: number }>('/admin/sessions', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  })
 };
