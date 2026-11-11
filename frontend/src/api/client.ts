@@ -6,7 +6,9 @@ import {
   AdminLoginResponse,
   AcademicClass,
   AcademicShift,
-  CreateSessionPayload
+  CreateSessionPayload,
+  StudentProfile,
+  RegisterStudentPayload
 } from './types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
@@ -93,5 +95,12 @@ export const api = {
   createSession: (payload: CreateSessionPayload) => request<{ id: string; name: string; totalSeats: number }>('/admin/sessions', {
     method: 'POST',
     body: JSON.stringify(payload)
-  })
+  }),
+
+  // Student Profile APIs
+  registerStudent: (payload: RegisterStudentPayload) => request<StudentProfile>('/students/register', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }),
+  getStudentProfile: (birthCertNo: string) => request<StudentProfile>(`/students/${birthCertNo}`)
 };

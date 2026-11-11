@@ -1,3 +1,30 @@
+// Student Profile
+export type Gender = 'MALE' | 'FEMALE' | 'OTHER';
+
+export interface StudentProfile {
+  id: string;
+  birthCertificateNo: string;
+  fullName: string;
+  dateOfBirth: string; // ISO date string "YYYY-MM-DD"
+  gender: Gender;
+  fatherName: string;
+  motherName: string;
+  guardianPhone?: string;
+  presentAddress?: string;
+  createdAt: string;
+}
+
+export interface RegisterStudentPayload {
+  birthCertificateNo: string;
+  fullName: string;
+  dateOfBirth: string; // "YYYY-MM-DD"
+  gender: Gender;
+  fatherName: string;
+  motherName: string;
+  guardianPhone?: string;
+  presentAddress?: string;
+}
+
 export interface SchoolClass {
   id: string;
   name: string;
