@@ -167,11 +167,16 @@ public class AdmissionService : IAdmissionService
                 var holdId = "h_" + Guid.NewGuid().ToString("N")[..8];
                 var expiresAt = now.AddSeconds(_holdDurationSeconds);
 
+                // Link to student profile if one exists for this birth cert number
+                var studentProfile = await _db.Students
+                    .FirstOrDefaultAsync(s => s.BirthCertificateNo == studentId);
+
                 var newHold = new SeatHold
                 {
                     Id = holdId,
                     ClassId = classId,
                     StudentId = studentId,
+                    StudentProfileId = studentProfile?.Id,
                     Status = HoldStatus.Held,
                     ExpiresAt = expiresAt,
                     CreatedAt = now

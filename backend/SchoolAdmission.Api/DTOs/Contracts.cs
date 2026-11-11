@@ -2,6 +2,34 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SchoolAdmission.Api.DTOs;
 
+// ── Student Profile ─────────────────────────────────────────────────────────
+
+public record RegisterStudentRequest(
+    [Required, StringLength(17, MinimumLength = 17)] string BirthCertificateNo,
+    [Required, StringLength(200, MinimumLength = 2)] string FullName,
+    [Required] DateOnly DateOfBirth,
+    [Required] string Gender,            // MALE | FEMALE | OTHER
+    [Required, StringLength(200, MinimumLength = 2)] string FatherName,
+    [Required, StringLength(200, MinimumLength = 2)] string MotherName,
+    [Phone] string? GuardianPhone,
+    string? PresentAddress
+);
+
+public record StudentProfileResponse(
+    string Id,
+    string BirthCertificateNo,
+    string FullName,
+    DateOnly DateOfBirth,
+    string Gender,
+    string FatherName,
+    string MotherName,
+    string? GuardianPhone,
+    string? PresentAddress,
+    DateTime CreatedAt
+);
+
+// ── Admission Session / Classes ──────────────────────────────────────────────
+
 public record CreateClassRequest(
     [Required] string Name,
     [Range(1, 100000)] int TotalSeats
@@ -21,6 +49,8 @@ public record ClassDetailResponse(
     int ConfirmedSeats,
     int AvailableSeats
 );
+
+// ── Seat Holds ───────────────────────────────────────────────────────────────
 
 public record CreateHoldResponse(
     string HoldId,
@@ -54,7 +84,8 @@ public record ErrorResponse(
     string Message
 );
 
-// Admin & Relational Management DTOs
+// ── Admin ────────────────────────────────────────────────────────────────────
+
 public record AdminLoginRequest(
     [Required] string Username,
     [Required] string Password
