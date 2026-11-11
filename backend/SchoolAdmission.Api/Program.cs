@@ -85,6 +85,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         await db.Database.EnsureCreatedAsync();
+        await DbInitializer.SeedAsync(db);
     }
     catch (Exception ex)
     {
