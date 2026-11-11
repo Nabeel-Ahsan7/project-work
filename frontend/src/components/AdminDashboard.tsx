@@ -5,9 +5,6 @@ import {
   Layers,
   PlusCircle,
   LogOut,
-  Users,
-  CheckCircle,
-  Ticket,
   RefreshCw,
   Home
 } from 'lucide-react';

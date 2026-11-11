@@ -1,5 +1,5 @@
 import React from 'react';
-import { School, UserPlus, ShieldLock, Clock, Users, CheckCircle, ArrowRight } from 'lucide-react';
+import { UserPlus, Lock, Clock, Users, CheckCircle, ArrowRight } from 'lucide-react';
 
 interface Props {
   onSelectStudentFlow: () => void;
@@ -27,7 +27,7 @@ export const LandingPage: React.FC<Props> = ({ onSelectStudentFlow, onSelectAdmi
               onClick={onSelectAdminFlow}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
             >
-              <ShieldLock className="w-3.5 h-3.5 text-indigo-600" />
+              <Lock className="w-3.5 h-3.5 text-indigo-600" />
               প্রশাসক লগইন (Admin Login)
             </button>
           </div>
@@ -78,7 +78,7 @@ export const LandingPage: React.FC<Props> = ({ onSelectStudentFlow, onSelectAdmi
             <div className="bg-white rounded-2xl p-7 border border-slate-200 shadow-md hover:shadow-xl transition-all duration-200 flex flex-col justify-between group">
               <div>
                 <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                  <ShieldLock className="w-6 h-6" />
+                  <Lock className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900">বিদ্যালয় প্রশাসক (Admin)</h3>
                 <p className="text-sm text-gray-500 mt-2 leading-relaxed">

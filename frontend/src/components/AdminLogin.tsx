@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldLock, KeyRound, User, ArrowLeft, Zap } from 'lucide-react';
+import { Lock, KeyRound, User, ArrowLeft, Zap } from 'lucide-react';
 import { api } from '../api/client';
 
 interface Props {
@@ -56,7 +56,7 @@ export const AdminLogin: React.FC<Props> = ({ onLoginSuccess, onBack, onError })
         </button>
 
         <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white mx-auto shadow-lg mb-3">
-          <ShieldLock className="w-8 h-8" />
+          <Lock className="w-8 h-8" />
         </div>
         <h2 className="text-center text-2xl font-black text-gray-900 tracking-tight">
           বিদ্যালয় প্রশাসক লগইন

@@ -1,15 +1,27 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { LandingPage } from './components/LandingPage';
+import { AdminLogin } from './components/AdminLogin';
+import { AdminDashboard } from './components/AdminDashboard';
 import { StudentIdBar } from './components/StudentIdBar';
-import { AdminClassForm } from './components/AdminClassForm';
 import { ClassList } from './components/ClassList';
 import { ActiveHoldModal } from './components/ActiveHoldModal';
 import { MyApplications } from './components/MyApplications';
 import { Notification, AlertMessage } from './components/Notification';
 import { api } from './api/client';
 import { SchoolClass, HoldResponse, MeHold } from './api/types';
-import { BookOpen, FileCheck, RefreshCw, AlertCircle } from 'lucide-react';
+import { BookOpen, FileCheck, RefreshCw, AlertCircle, Home, Lock } from 'lucide-react';
 
 export const App: React.FC = () => {
+  // Navigation View: 'landing' | 'student' | 'admin-login' | 'admin-dashboard'
+  const [currentView, setCurrentView] = useState<'landing' | 'student' | 'admin-login' | 'admin-dashboard'>(() => {
+    const savedToken = sessionStorage.getItem('admin_token');
+    return savedToken ? 'admin-dashboard' : 'landing';
+  });
+
+  const [adminUsername, setAdminUsername] = useState<string>(() => {
+    return sessionStorage.getItem('admin_username') || 'admin';
+  });
+
   const [studentId, setStudentId] = useState<string>(() => {
     return localStorage.getItem('student_id') || '';
   });
@@ -54,14 +66,13 @@ export const App: React.FC = () => {
       const data = await api.getClasses();
       setClasses(data);
     } catch (err: any) {
-      // Show subtle notification only if we don't have any classes yet
-      if (classes.length === 0) {
+      if (classes.length === 0 && currentView === 'student') {
         showAlert('error', err.message || 'শ্রেণির তালিকা আনা যাচ্ছে না');
       }
     } finally {
       setLoadingClasses(false);
     }
-  }, [classes.length, showAlert]);
+  }, [classes.length, currentView, showAlert]);
 
   // Fetch student's applications
   const fetchMyHolds = useCallback(async () => {
@@ -80,7 +91,6 @@ export const App: React.FC = () => {
     }
   }, [studentId, showAlert]);
 
-  // Initial load
   useEffect(() => {
     fetchClasses();
   }, [fetchClasses]);
@@ -137,18 +147,84 @@ export const App: React.FC = () => {
     fetchMyHolds();
   };
 
+  const handleAdminLoginSuccess = (token: string, username: string) => {
+    sessionStorage.setItem('admin_token', token);
+    sessionStorage.setItem('admin_username', username);
+    setAdminUsername(username);
+    setCurrentView('admin-dashboard');
+    showAlert('success', `স্বাগতম ${username}! আপনি সফলভাবে অ্যাডমিন প্যানেলে লগইন করেছেন।`);
+  };
+
+  const handleAdminLogout = () => {
+    sessionStorage.removeItem('admin_token');
+    sessionStorage.removeItem('admin_username');
+    setCurrentView('landing');
+    showAlert('info', 'অ্যাডমিন অ্যাকাউন্ট থেকে লগআউট সম্পন্ন হয়েছে।');
+  };
+
+  // View 1: Landing Page
+  if (currentView === 'landing') {
+    return (
+      <>
+        <LandingPage
+          onSelectStudentFlow={() => setCurrentView('student')}
+          onSelectAdminFlow={() => setCurrentView('admin-login')}
+        />
+        <Notification alert={alert} onClose={() => setAlert(null)} />
+      </>
+    );
+  }
+
+  // View 2: Admin Login
+  if (currentView === 'admin-login') {
+    return (
+      <>
+        <AdminLogin
+          onLoginSuccess={handleAdminLoginSuccess}
+          onBack={() => setCurrentView('landing')}
+          onError={(msg) => showAlert('error', msg)}
+        />
+        <Notification alert={alert} onClose={() => setAlert(null)} />
+      </>
+    );
+  }
+
+  // View 3: Admin Dashboard
+  if (currentView === 'admin-dashboard') {
+    return (
+      <>
+        <AdminDashboard
+          adminUsername={adminUsername}
+          onLogout={handleAdminLogout}
+          onGoToHome={() => setCurrentView('student')}
+          onSuccess={(msg) => showAlert('success', msg)}
+          onError={(msg) => showAlert('error', msg)}
+        />
+        <Notification alert={alert} onClose={() => setAlert(null)} />
+      </>
+    );
+  }
+
+  // View 4: Student Admission View
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Student Identity Bar */}
       <StudentIdBar studentId={studentId} onStudentIdChange={handleStudentIdChange} />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Navigation Tabs */}
-        <div className="flex items-center justify-between border-b border-gray-200 mb-6">
+        {/* Navigation Tabs with Home and Admin Quick Switch */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200 mb-6 gap-3">
           <div className="flex items-center gap-2">
             <button
+              onClick={() => setCurrentView('landing')}
+              className="inline-flex items-center gap-1.5 py-3 px-3 text-xs font-semibold text-gray-500 hover:text-gray-900 border-b-2 border-transparent transition-colors"
+            >
+              <Home className="w-4 h-4" /> প্রথম পাতা
+            </button>
+
+            <button
               onClick={() => setActiveTab('classes')}
-              className={`flex items-center gap-2 py-3 px-4 border-b-2 font-semibold text-sm transition-colors ${
+              className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm transition-colors ${
                 activeTab === 'classes'
                   ? 'border-indigo-600 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -160,7 +236,7 @@ export const App: React.FC = () => {
 
             <button
               onClick={() => setActiveTab('my-applications')}
-              className={`flex items-center gap-2 py-3 px-4 border-b-2 font-semibold text-sm transition-colors relative ${
+              className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm transition-colors relative ${
                 activeTab === 'my-applications'
                   ? 'border-indigo-600 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -177,6 +253,13 @@ export const App: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 text-xs text-gray-500">
+            <button
+              onClick={() => setCurrentView('admin-login')}
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+            >
+              <Lock className="w-3.5 h-3.5" /> অ্যাডমিন লগইন
+            </button>
+
             {activeHold && activeHold.status === 'HELD' && (
               <button
                 onClick={() => setActiveHold({ ...activeHold })}
@@ -186,6 +269,7 @@ export const App: React.FC = () => {
                 চলমান আবেদন দেখুন
               </button>
             )}
+
             <button
               onClick={() => {
                 fetchClasses();
@@ -202,15 +286,9 @@ export const App: React.FC = () => {
         {/* Tab 1: Classes & Application */}
         {activeTab === 'classes' && (
           <div>
-            <AdminClassForm
-              onClassCreated={fetchClasses}
-              onError={(msg) => showAlert('error', msg)}
-              onSuccess={(msg) => showAlert('success', msg)}
-            />
-
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-bold text-gray-900">ভর্তিযোগ্য শ্রেণিসমূহ (Available Classes)</h2>
+                <h2 className="text-lg font-bold text-gray-900">ভর্তিযোগ্য শ্রেণিসমূহ (Available Classes & Shifts)</h2>
                 <p className="text-xs text-gray-500">আসন সংখ্যা প্রতি ৩ সেকেন্ড পরপর স্বয়ংক্রিয়ভাবে আপডেট হয়।</p>
               </div>
             </div>
